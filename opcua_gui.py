@@ -16,16 +16,16 @@ from  opcua_command_line import cancella_contenuto_array_caratteri, scrivi_strin
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
 #                               definizioni delle variabili globali
-CLIENT = None
+# CLIENT = None
 OPCUA_IP = "opc.tcp://192.168.0.1:4840"
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
-
-def start_OPCUA():
-    global CLIENT, OPCUA_IP
-    CLIENT = connect_to_plc(OPCUA_IP)
-    if CLIENT == None:
-        raise Exception("ATTENZIONE IL L'OGGETTO PER LA CONNESSIONE OPCUA E' NULLO")
+#
+# def start_OPCUA():
+#     global CLIENT, OPCUA_IP
+#     CLIENT = connect_to_plc(OPCUA_IP)
+#     if CLIENT == None:
+#         raise Exception("ATTENZIONE IL L'OGGETTO PER LA CONNESSIONE OPCUA E' NULLO")
 
 def error_message_box(titolo_frame, tipo_errore, testo):
     msg = QMessageBox()
@@ -35,67 +35,94 @@ def error_message_box(titolo_frame, tipo_errore, testo):
     msg.setWindowTitle(titolo_frame)
     msg.exec_()
 
-class Ui_Dialog(object):
-    def setupUi(self, Dialog):
-        Dialog.setObjectName("Dialog")
-        Dialog.resize(600, 386)
-        self.label = QtWidgets.QLabel(Dialog)
+def ok_message_box(titolo_frame, tipo, testo):
+    msg = QMessageBox()
+    msg.setText(tipo)
+    msg.setInformativeText(testo)
+    msg.setWindowTitle(titolo_frame)
+    msg.exec_()
+
+class Ui_Opcua(object):
+    def __init__(self):
+        global OPCUA_IP
+        print("Inizializzazione attributi")
+        self.client_opc = connect_to_plc(OPCUA_IP)
+
+    # def connect_to_OPCUA(self):
+    #     client_obj = self.client_opc.connect()
+    #     client_obj = self.client_opc.load_type_definitions()  # load definition of server specific structures/extension objects
+    #     return client_obj
+    #
+    # def disconnect_to_OPCUA(self, client):
+    #     client.disconnect()
+
+
+    def setupUi(self, Opcua):
+        Opcua.setObjectName("Opcua")
+        Opcua.resize(600, 386)
+        self.label = QtWidgets.QLabel(Opcua)
         self.label.setGeometry(QtCore.QRect(10, 70, 571, 21))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.label.setFont(font)
         self.label.setObjectName("label")
-        self.text_to_send_to_plc = QtWidgets.QTextEdit(Dialog)
+        self.text_to_send_to_plc = QtWidgets.QTextEdit(Opcua)
         self.text_to_send_to_plc.setGeometry(QtCore.QRect(10, 100, 571, 41))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.text_to_send_to_plc.setFont(font)
         self.text_to_send_to_plc.setObjectName("text_to_send_to_plc")
-        self.text_readed_from_plc = QtWidgets.QTextEdit(Dialog)
+        self.text_readed_from_plc = QtWidgets.QTextEdit(Opcua)
         self.text_readed_from_plc.setGeometry(QtCore.QRect(10, 330, 571, 41))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.text_readed_from_plc.setFont(font)
         self.text_readed_from_plc.setObjectName("text_readed_from_plc")
-        self.label_2 = QtWidgets.QLabel(Dialog)
+        self.label_2 = QtWidgets.QLabel(Opcua)
         self.label_2.setGeometry(QtCore.QRect(10, 270, 571, 21))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.label_2.setFont(font)
         self.label_2.setObjectName("label_2")
-        self.pushButton_read_from_plc = QtWidgets.QPushButton(Dialog)
+        self.pushButton_read_from_plc = QtWidgets.QPushButton(Opcua)
         self.pushButton_read_from_plc.setGeometry(QtCore.QRect(10, 300, 571, 23))
         self.pushButton_read_from_plc.setObjectName("pushButton_read_from_plc")
-        self.pushButton_send_to_plc = QtWidgets.QPushButton(Dialog)
+        self.pushButton_send_to_plc = QtWidgets.QPushButton(Opcua)
         self.pushButton_send_to_plc.setGeometry(QtCore.QRect(10, 200, 571, 51))
         self.pushButton_send_to_plc.setObjectName("pushButton_send_to_plc")
-        self.label_ns = QtWidgets.QLabel(Dialog)
+        self.label_ns = QtWidgets.QLabel(Opcua)
         self.label_ns.setGeometry(QtCore.QRect(195, 160, 31, 31))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.label_ns.setFont(font)
         self.label_ns.setObjectName("label_ns")
-        self.text_ns_var = QtWidgets.QTextEdit(Dialog)
+        self.text_ns_var = QtWidgets.QTextEdit(Opcua)
         self.text_ns_var.setGeometry(QtCore.QRect(230, 160, 51, 31))
         self.text_ns_var.setObjectName("text_ns_var")
-        self.label_var_id = QtWidgets.QLabel(Dialog)
+        self.label_var_id = QtWidgets.QLabel(Opcua)
         self.label_var_id.setGeometry(QtCore.QRect(290, 160, 31, 31))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.label_var_id.setFont(font)
         self.label_var_id.setObjectName("label_var_id")
-        self.text_id_var = QtWidgets.QTextEdit(Dialog)
+        self.text_id_var = QtWidgets.QTextEdit(Opcua)
         self.text_id_var.setGeometry(QtCore.QRect(320, 160, 51, 31))
         self.text_id_var.setObjectName("text_id_var")
-        self.label_3 = QtWidgets.QLabel(Dialog)
+        self.label_3 = QtWidgets.QLabel(Opcua)
         self.label_3.setGeometry(QtCore.QRect(410, 0, 191, 71))
         self.label_3.setText("")
         self.label_3.setPixmap(QtGui.QPixmap("images/image001.png"))
         self.label_3.setObjectName("label_3")
 
-        # self.action_invia_al_plc = QtWidgets.QAction(Dialog)
+        # self.action_invia_al_plc = QtWidgets.QAction(Opcua)
         # self.action_invia_al_plc.setObjectName("action_invia_al_plc")
-        # self.action_leggi_da_plc = QtWidgets.QAction(Dialog)
+        # self.action_leggi_da_plc = QtWidgets.QAction(Opcua)
         # self.action_leggi_da_plc.setObjectName("action_leggi_da_plc")
 
-        self.retranslateUi(Dialog)
+        self.retranslateUi(Opcua)
         self.pushButton_send_to_plc.pressed.connect(self.action_invia_al_plc)
         self.pushButton_read_from_plc.clicked.connect(self.action_leggi_da_plc)
-        QtCore.QMetaObject.connectSlotsByName(Dialog)
+        QtCore.QMetaObject.connectSlotsByName(Opcua)
     
 
     def controlla_campi_ns_id(self, id_var, id_ns):
@@ -118,8 +145,7 @@ class Ui_Dialog(object):
 
     def action_invia_al_plc(self):
         # print("pressed")
-        global CLIENT
-        start_OPCUA()        
+        # global CLIENT
         # CLIENT = connect_to_plc(OPCUA_IP)
 
         id_var = self.text_id_var.toPlainText()
@@ -129,61 +155,65 @@ class Ui_Dialog(object):
 
         flag = self.controlla_campi_ns_id(id_var,id_ns)
 
-        # if not re.match('^[0-9]+$', id_var):
-        #     error_message_box("Errore", "Attenzione!", "Inserisci solo dei numeri nel campo ID")
-        #     flag=True
-
-        # if not re.match('^[0-9]+$', id_ns):
-        #     error_message_box("Errore", "Attenzione!", "Inserisci solo dei numeri nel campo NS")
-        #     flag=True
-        
         if not re.match('^[a-zA-Z0-9-]+$', testo_da_scrivere):
             error_message_box("Errore", "Attenzione!", "Non sono ammessi caratteri che non siano lettere e numeri")
             flag=True
 
-        id_ns = int(id_ns)
-        id_var = int(id_var)
-        if flag == False and CLIENT !=None:
-            cancella_contenuto_array_caratteri(CLIENT,ns=id_ns,i=id_var,ARRAY_DIM=10)
-            # scrivi_stringa(CLIENT,ns=id_ns,i=id_var,STR_VAL=testo_da_scrivere,ARRAY_DIM=10)
+        if flag == True:
+            return
 
+        try:
+            self.client_opc.connect()
+            self.client_opc.load_type_definitions()
 
+            id_ns = int(id_ns)
+            id_var = int(id_var)
+            if flag == False and self.client_opc !=None:
+                cancella_contenuto_array_caratteri(self.client_opc,ns=id_ns,i=id_var,ARRAY_DIM=10)
+                scrivi_stringa(self.client_opc,ns=id_ns,i=id_var,STR_VAL=testo_da_scrivere,ARRAY_DIM=10)
+        finally:
+            self.client_opc.disconnect()
+            ok_message_box("Scrittura riuscita", "ok!","la scrittura ha avuto successo")
 
     def action_leggi_da_plc(self):
-        # print("clicked")
-        global CLIENT
-        start_OPCUA()
-        flag = False
+
         id_var = self.text_id_var.toPlainText()
         id_ns = self.text_ns_var.toPlainText()
-
         flag = self.controlla_campi_ns_id(id_var, id_ns)
-        id_ns = int(id_ns)
-        id_var = int(id_var)
-        if flag == False and CLIENT !=None:
-            array = leggi_vettore_caratteri(CLIENT,ns=id_ns,i=id_var,ARRAY_DIM=10)
-            self.text_readed_from_plc.setPlainText(array)
+        if flag == True:
+            return
 
+        try:
+            self.client_opc.connect()
+            self.client_opc.load_type_definitions()  # load definition of server specific structures/extension objects
+            flag = False
+            id_ns = int(id_ns)
+            id_var = int(id_var)
+            if flag == False:
+                array = leggi_vettore_caratteri(self.client_opc, ns=id_ns, i=id_var, ARRAY_DIM=10)
+                self.text_readed_from_plc.setPlainText(array)
+        finally:
+            self.client_opc.disconnect()
 
-    def retranslateUi(self, Dialog):
+    def retranslateUi(self, Opcua):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Test OPCUA"))
-        self.label.setText(_translate("Dialog", "Inserisci qui il testo da inviare al PLC"))
-        self.label_2.setText(_translate("Dialog", "Visualizzazione del contenuto del buffer del plc"))
-        self.pushButton_read_from_plc.setText(_translate("Dialog", "Leggi il buffer del PLC"))
-        self.pushButton_send_to_plc.setText(_translate("Dialog", "Invia al PLC"))
-        self.label_ns.setText(_translate("Dialog", "ns ="))
-        self.label_var_id.setText(_translate("Dialog", "id ="))
-        # self.action_invia_al_plc.setText(_translate("Dialog", "_invia_al_plc"))
-        # self.action_leggi_da_plc.setText(_translate("Dialog", "_leggi_da_plc"))
+        Opcua.setWindowTitle(_translate("Opcua", "Test OPCUA"))
+        self.label.setText(_translate("Opcua", "Inserisci qui il testo da inviare al PLC"))
+        self.label_2.setText(_translate("Opcua", "Visualizzazione del contenuto del buffer del plc"))
+        self.pushButton_read_from_plc.setText(_translate("Opcua", "Leggi il buffer del PLC"))
+        self.pushButton_send_to_plc.setText(_translate("Opcua", "Invia al PLC"))
+        self.label_ns.setText(_translate("Opcua", "ns ="))
+        self.label_var_id.setText(_translate("Opcua", "id ="))
+        # self.action_invia_al_plc.setText(_translate("Opcua", "_invia_al_plc"))
+        # self.action_leggi_da_plc.setText(_translate("Opcua", "_leggi_da_plc"))
 
 
 if __name__ == "__main__":
     import sys
 
     app = QtWidgets.QApplication(sys.argv)
-    Dialog = QtWidgets.QDialog()
-    ui = Ui_Dialog()
-    ui.setupUi(Dialog)
-    Dialog.show()
+    Opcua = QtWidgets.QDialog()
+    ui = Ui_Opcua()
+    ui.setupUi(Opcua)
+    Opcua.show()
     sys.exit(app.exec_())
