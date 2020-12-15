@@ -20,12 +20,17 @@ from  opcua_command_line import cancella_contenuto_array_caratteri, scrivi_strin
 OPCUA_IP = "opc.tcp://192.168.0.1:4840"
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
-#
-# def start_OPCUA():
-#     global CLIENT, OPCUA_IP
-#     CLIENT = connect_to_plc(OPCUA_IP)
-#     if CLIENT == None:
-#         raise Exception("ATTENZIONE IL L'OGGETTO PER LA CONNESSIONE OPCUA E' NULLO")
+
+def read_confing_parameters():
+    import configparser
+    config = configparser.ConfigParser()
+    a = config.read('settings.ini')
+
+    opcua_ip = config['DEFAULT']['opcua_ip']
+    ns = config['COORDINATE_VETTORE_DA_SCRIVERE']['ns']
+    id = config['COORDINATE_VETTORE_DA_SCRIVERE']['id']
+
+    return opcua_ip, ns, id
 
 def error_message_box(titolo_frame, tipo_errore, testo):
     msg = QMessageBox()
@@ -43,19 +48,19 @@ def ok_message_box(titolo_frame, tipo, testo):
     msg.exec_()
 
 class Ui_Opcua(object):
+
     def __init__(self):
         global OPCUA_IP
         print("Inizializzazione attributi")
+        self.opcua_ip, self.ns, self.id = read_confing_parameters()
+        OPCUA_IP = self.opcua_ip
         self.client_opc = connect_to_plc(OPCUA_IP)
 
-    # def connect_to_OPCUA(self):
-    #     client_obj = self.client_opc.connect()
-    #     client_obj = self.client_opc.load_type_definitions()  # load definition of server specific structures/extension objects
-    #     return client_obj
-    #
-    # def disconnect_to_OPCUA(self, client):
-    #     client.disconnect()
 
+
+    def insert_default_ns_id(self):
+        self.text_ns_var.setPlainText(self.ns)
+        self.text_id_var.setPlainText(self.id)
 
     def setupUi(self, Opcua):
         Opcua.setObjectName("Opcua")
@@ -123,7 +128,9 @@ class Ui_Opcua(object):
         self.pushButton_send_to_plc.pressed.connect(self.action_invia_al_plc)
         self.pushButton_read_from_plc.clicked.connect(self.action_leggi_da_plc)
         QtCore.QMetaObject.connectSlotsByName(Opcua)
-    
+
+        self.insert_default_ns_id()
+
 
     def controlla_campi_ns_id(self, id_var, id_ns):
         """
