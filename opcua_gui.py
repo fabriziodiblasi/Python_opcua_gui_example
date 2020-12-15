@@ -11,13 +11,93 @@ from PyQt5.QtWidgets import QMessageBox
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import re
-from  opcua_command_line import cancella_contenuto_array_caratteri, scrivi_stringa, connect_to_plc, leggi_vettore_caratteri
+# from  opcua_command_line import cancella_contenuto_array_caratteri, scrivi_stringa, connect_to_plc, leggi_vettore_caratteri
 
+from opcua import ua
+from opcua import Client
+from opcua import Node
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
 #                               definizioni delle variabili globali
 # CLIENT = None
 OPCUA_IP = "opc.tcp://192.168.0.1:4840"
+# ------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------
+
+
+
+
+# ------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------
+#                                   FUNZIONI PER OPCUA
+# ------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------
+
+def leggi_vettore_caratteri(client, ns, i, ARRAY_DIM):
+    """
+    Legge il contenuto di un array di char all'interno della DB di scambio
+    :param client: oggetto per la connessione OPC UA
+    :param ns: namespace id
+    :param i:  indice del namespace
+    :param ARRAY_DIM: dimensioni del vettore definito nella DB di scambio
+    :return: stringa letta nel DB
+    """
+    out = ""
+    for pos in range(ARRAY_DIM+1):
+        stringa = "" + "ns="+str(ns)+";i="+str(i+pos+1)
+        var = client.get_node(stringa)
+        var.get_data_value()  # get value of node as a DataValue object
+        VAL = var.get_value()  # get value of node as a python builtin
+        out += chr(VAL)
+    return out
+
+
+def connect_to_plc(indirizzo):
+    client = Client(indirizzo)
+    return client
+
+
+def scrivi_stringa(client, ns, i, STR_VAL, ARRAY_DIM):
+    """
+    scrive la stringa all'interno dell'array di caratteri del DB
+    :param client: oggetto per la connessione OPC UA
+    :param ns: namespace id
+    :param i:  indice del namespace
+    :param STR_VAL: stringa da scrivere
+    :param ARRAY_DIM: dimensioni del vettore definito nella DB di scambio
+    :return:
+    """
+
+    for pos, char in enumerate(STR_VAL):
+        if pos < ARRAY_DIM+1:
+            stringa = "" + "ns="+str(ns)+";i="+str(i+pos+1)
+            var = client.get_node(stringa)
+            datavalue = ua.DataValue(ua.Variant(ord(char), ua.VariantType.Byte))
+            var.set_data_value(datavalue)
+        else:
+            warnings.warn("attenzione limite vettore oltrepassato : la stringa e' stata troncata")
+            return
+
+
+
+def cancella_contenuto_array_caratteri(client, ns, i, ARRAY_DIM):
+    """
+    resetta il contenuto di un array di char all'interno della DB di scambio
+    :param client: oggetto per la connessione OPC UA
+    :param ns: namespace id
+    :param i:  indice del namespace
+    :param ARRAY_DIM: dimensioni del vettore definito nella DB di scambio
+    :return:
+    """
+    for pos in range(ARRAY_DIM+1):
+        stringa = "" + "ns="+str(ns)+";i="+str(i+pos+1)
+        var = client.get_node(stringa)
+        datavalue = ua.DataValue(ua.Variant(ord(" "), ua.VariantType.Byte))
+        var.set_data_value(datavalue)
+
+# ------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------
+#                                      FUNZIONI PER OPCUA
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
 
