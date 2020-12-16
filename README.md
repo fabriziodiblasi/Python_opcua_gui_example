@@ -13,8 +13,12 @@ pip install https://github.com/pyinstaller/pyinstaller/archive/develop.zip
 ```
 
 ### comandi da eseguire
+
+aprire cmd dalla cartella in cui vi è il file python \
+Poi digitare i seguenti comandi da CMD
+
+
 ```
-aprire cmd dalla cartella in cui vi è il file python
 set PATH=%PATH%;C:\Windows\System32\downlevel;
 pyinstaller.exe --onefile --windowed app.py
 ```
