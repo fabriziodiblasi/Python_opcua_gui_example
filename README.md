@@ -23,4 +23,5 @@ set PATH=%PATH%;C:\Windows\System32\downlevel;
 pyinstaller.exe --onefile --windowed app.py
 ```
 
+# attenzione ! ricordati di copiare il file ini nella stessa cartella dell'eseguibile !
 
