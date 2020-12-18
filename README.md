@@ -12,7 +12,7 @@
 pip install https://github.com/pyinstaller/pyinstaller/archive/develop.zip
 ```
 
-### comandi da eseguire
+### comandi da eseguire per la creazione del .exe:
 
 aprire cmd dalla cartella in cui vi è il file python \
 Poi digitare i seguenti comandi da CMD
